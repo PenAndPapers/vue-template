@@ -45,10 +45,11 @@ export default (
       });
 
       /**
-       * redirect to users page after page is refreshed
-       * since user is already authenticated
+       * redirect to the last accessed page after page is refreshed
        */
-      if (from.name === undefined) next("/users");
+      const origin = window.location.origin;
+      const path = window.location.toString().replace(origin, "");
+      if (from.name === undefined) next(path);
     }
 
     /**

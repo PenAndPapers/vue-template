@@ -31,8 +31,8 @@ import { useLoginStore } from "@/modules/Login/store";
 const loginStore = useLoginStore();
 
 const form = reactive({
-  email: "",
-  password: "",
+  email: "eve.holt@reqres.in",
+  password: "cityslicka",
 });
 
 const handleValidateForm = async () => {

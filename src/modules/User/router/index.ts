@@ -5,6 +5,7 @@ export default [
     meta: {
       class: "users",
       requiresAuth: true,
+      hideInNav: false,
     },
     component: () =>
       import(/* webpackChunkName: 'Users' */ "../views/index.vue"),

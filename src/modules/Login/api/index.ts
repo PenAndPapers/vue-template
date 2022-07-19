@@ -1,4 +1,4 @@
-import requestor from "@/utils/requestor"
+import requestor from "@/utils/requestor";
 import type { LoginForm } from "@/modules/Login/models";
 
 export const login = async (payload: LoginForm) => {

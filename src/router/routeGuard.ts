@@ -1,13 +1,34 @@
-import type {
-  RouteLocation,
-  RouteRecordNormalized,
-  RouteRecordRaw,
-} from "vue-router";
-import authMiddleWare from "@/middleware/auth";
+import type { RouteLocation, RouteRecordRaw } from "vue-router";
+import { isAuthenticated } from "@/middleware/auth";
 import router from "./index";
+import staticRoutes from "./routes/static";
 import dynamicRoutes from "./routes/dynamic";
 
 const NextLocation = new Function();
+
+const addRoutes = (routes: RouteRecordRaw[]) => {
+  routes.forEach(async (route) => {
+    await new Promise((resolve) => {
+      router.addRoute(route);
+      resolve(true);
+    });
+  });
+};
+
+const removeRoutes = (routes: RouteRecordRaw[], requiresAuth: boolean) => {
+  routes.forEach(async (route) => {
+    if (
+      route &&
+      route.meta.requiresAuth === requiresAuth &&
+      !["PageError", "PageNotFound"].includes(route.name as string)
+    ) {
+      await new Promise((resolve) => {
+        router.removeRoute(route.name as string);
+        resolve(true);
+      });
+    }
+  });
+};
 
 export default (
   to: RouteLocation,
@@ -17,32 +38,13 @@ export default (
   /**
    * check if user is authenticated
    */
-  if (authMiddleWare()) {
+  if (isAuthenticated()) {
     /**
      * check if dynamic routes is not yet added to current route
      */
     if (!router.hasRoute("Users")) {
-      dynamicRoutes.forEach(async (route: RouteRecordRaw) => {
-        await new Promise((resolve) => {
-          router.addRoute(route);
-          resolve(true);
-        });
-      });
-
-      /**
-       * remove routes that doesnt need authentication
-       */
-      router.getRoutes().forEach(async (route) => {
-        if (
-          !route.meta.requiresAuth &&
-          !["PageError", "PageNotFound"].includes(route.name as string)
-        ) {
-          await new Promise((resolve) => {
-            router.removeRoute(route.name as string);
-            resolve(true);
-          });
-        }
-      });
+      addRoutes(dynamicRoutes);
+      removeRoutes(staticRoutes, false);
 
       /**
        * redirect to the last accessed page after page is refreshed
@@ -62,6 +64,13 @@ export default (
       next();
     }
   } else {
-    next();
+    if (!router.hasRoute("Home")) {
+      addRoutes(staticRoutes);
+      removeRoutes(dynamicRoutes, true);
+
+      if (router.hasRoute("Home")) next(to.redirectedFrom?.fullPath);
+    } else {
+      next();
+    }
   }
 };

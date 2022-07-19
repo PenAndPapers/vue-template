@@ -5,6 +5,7 @@ export default [
     meta: {
       title: "404",
       class: "error-404",
+      requiresAuth: false,
       hideInNav: true,
     },
     component: () =>
@@ -17,6 +18,7 @@ export default [
     name: "PageError",
     redirect: "/page-not-found",
     meta: {
+      requiresAuth: false,
       hideInNav: true,
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <header class="my-4">
+  <header>
     <nav>
       <span
         v-for="(route, index) in routes"

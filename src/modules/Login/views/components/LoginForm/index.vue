@@ -9,7 +9,7 @@
         v-model="form.email"
       />
     </div>
-    <div class="field mb-4">
+    <div class="field mb-5">
       <label class="block text-left text-white" for="password">Password</label>
       <input
         type="password"

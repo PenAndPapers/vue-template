@@ -18,7 +18,7 @@ const addRoutes = (routes: RouteRecordRaw[]) => {
 const removeRoutes = (routes: RouteRecordRaw[], requiresAuth: boolean) => {
   routes.forEach(async (route) => {
     if (
-      route &&
+      route.meta &&
       route.meta.requiresAuth === requiresAuth &&
       !["PageError", "PageNotFound"].includes(route.name as string)
     ) {
@@ -40,7 +40,9 @@ export default (
    */
   if (isAuthenticated()) {
     /**
-     * check if dynamic routes is not yet added to current route
+     * if dynamic routes are not yet added to current route
+     * then we need to add it first to prevent 404 page to show
+     * when page is refreshed
      */
     if (!router.hasRoute("Users")) {
       addRoutes(dynamicRoutes);
